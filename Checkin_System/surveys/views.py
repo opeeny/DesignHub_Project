@@ -14,26 +14,28 @@ def index(request):
     return render(request, 'surveys/index.html', context)
 
 def login(request):
-    # visitors_list = Register.objects.order_by('-date')
-    search_form = SearchForm()
-    add_form = AddForm()
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
-        #If there's a user 
             if user is not None:
-               return render(request, 'surveys/homepage.html', {'form': search_form, 'visitors_list': add_form, '': visitors_list})
+                search_form = SearchForm()
+                add_form = AddForm()
+                visitors_list = Visitors.objects.all()
+                return render(request,'surveys/homepage.html',{'form': search_form, 'addform':add_form, 'visitors_list':visitors_list})
             else:
+                # flash('Invalid username or password')
                 pass
+
         else:
             form = LoginForm()
             context = {
-                "form": form
-            }
-            return render(request, 'surveys/index.html', context)
+                        "form": form
+                        }
+            return render(request,'surveys/index.html',context)
+
 def search(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
